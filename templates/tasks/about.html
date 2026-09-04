@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}About System{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h4 class="fw-bold mb-0 text-dark">
+                        <i class="bi bi-info-circle text-primary me-2"></i> About Student Task & Performance Management System
+                    </h4>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- Project Overview -->
+                    <h5 class="fw-bold text-dark mb-2">1. System Overview</h5>
+                    <p class="text-secondary leading-relaxed mb-4">
+                        The <strong>Student Task & Performance Management System</strong> is a full-stack web application designed to help university and college students systematically organize academic coursework, laboratory assignments, and project deliverables while tracking personal performance metrics in real time.
+                    </p>
+
+                    <!-- Key Objectives -->
+                    <h5 class="fw-bold text-dark mb-2">2. Core Objectives</h5>
+                    <ul class="list-group list-group-flush mb-4">
+                        <li class="list-group-item px-0">
+                            <i class="bi bi-check2-circle text-success me-2"></i>
+                            <strong>Coursework Organization:</strong> Centralize assignments across multiple academic subjects with custom priorities, status tags, and deadlines.
+                        </li>
+                        <li class="list-group-item px-0">
+                            <i class="bi bi-check2-circle text-success me-2"></i>
+                            <strong>Automated Overdue Detection:</strong> Systematically detect missed deadlines without requiring manual intervention.
+                        </li>
+                        <li class="list-group-item px-0">
+                            <i class="bi bi-check2-circle text-success me-2"></i>
+                            <strong>Performance Analytics:</strong> Provide real-time task completion ratios, priority breakdowns, and milestone tracking.
+                        </li>
+                        <li class="list-group-item px-0">
+                            <i class="bi bi-check2-circle text-success me-2"></i>
+                            <strong>Strict Data Isolation & Security:</strong> Enforce complete user privacy so each student can access only their own records.
+                        </li>
+                    </ul>
+
+                    <!-- Technology Stack -->
+                    <h5 class="fw-bold text-dark mb-3">3. Technology Architecture</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="border rounded p-3 h-100 bg-light">
+                                <h6 class="fw-bold text-primary mb-2">
+                                    <i class="bi bi-cpu me-1"></i> Backend Architecture
+                                </h6>
+                                <ul class="small text-muted mb-0 ps-3">
+                                    <li><strong>Python 3:</strong> High-performance, clean programming language.</li>
+                                    <li><strong>Django Web Framework:</strong> Model-View-Template (MVT) architecture.</li>
+                                    <li><strong>Django ORM:</strong> Object-Relational Mapping for safe SQL operations.</li>
+                                    <li><strong>Django Authentication:</strong> Built-in session security and password hashing.</li>
+                                    <li><strong>SQLite:</strong> Serverless, zero-configuration relational database.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="border rounded p-3 h-100 bg-light">
+                                <h6 class="fw-bold text-primary mb-2">
+                                    <i class="bi bi-window me-1"></i> Frontend Presentation
+                                </h6>
+                                <ul class="small text-muted mb-0 ps-3">
+                                    <li><strong>HTML5 & CSS3:</strong> Semantic and accessible web markup.</li>
+                                    <li><strong>Bootstrap 5:</strong> Responsive grid system, typography, and utility classes.</li>
+                                    <li><strong>Bootstrap Icons:</strong> Vector iconography for intuitive visual indicators.</li>
+                                    <li><strong>Vanilla JavaScript:</strong> Form interactions and client-side usability.</li>
+                                    <li><strong>Chart.js:</strong> Lightweight canvas-based priority statistics visualization.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Roles & Permissions -->
+                    <h5 class="fw-bold text-dark mb-2">4. User Roles & Access Levels</h5>
+                    <div class="table-responsive mb-4">
+                        <table class="table table-bordered align-middle small">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Role</th>
+                                    <th>Permissions & Scope</th>
+                                    <th>Primary Interface</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong class="text-primary">Student</strong></td>
+                                    <td>Register, login, create, view, update, delete, search, and filter personal academic tasks. Track performance score.</td>
+                                    <td>Student Web Portal & Dashboard</td>
+                                </tr>
+                                <tr>
+                                    <td><strong class="text-danger">Admin / Faculty</strong></td>
+                                    <td>Manage student accounts, view all tasks across the institution, filter by status, inspect creation dates, and oversee system health.</td>
+                                    <td>Django Administration Portal</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="alert alert-info d-flex align-items-center mb-0" role="alert">
+                        <i class="bi bi-mortarboard fs-4 me-3"></i>
+                        <div>
+                            <strong>Student Project Architecture:</strong> Built adhering to clean design principles, robust query filtering, and defensive authorization guards.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

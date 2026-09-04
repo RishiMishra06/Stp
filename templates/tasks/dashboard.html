@@ -1,0 +1,351 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Welcome Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <div>
+            <h2 class="h3 fw-bold text-dark mb-1">
+                Welcome back, {{ user.first_name|default:user.username }}!
+            </h2>
+            <p class="text-secondary mb-0">Here is your academic task progress and performance summary.</p>
+        </div>
+        <div class="mt-3 mt-md-0">
+            <a href="{% url 'task_create' %}" class="btn btn-primary d-inline-flex align-items-center gap-2 shadow-sm">
+                <i class="bi bi-plus-lg"></i> Add New Task
+            </a>
+            <a href="{% url 'task_list' %}" class="btn btn-outline-secondary ms-2">
+                <i class="bi bi-list-check"></i> View All Tasks
+            </a>
+        </div>
+    </div>
+
+    <!-- Overdue Alert Banner if overdue tasks exist -->
+    {% if overdue_tasks > 0 %}
+    <div class="alert alert-danger d-flex align-items-center justify-content-between shadow-sm mb-4" role="alert">
+        <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-exclamation-octagon-fill fs-4 text-danger"></i>
+            <div>
+                <strong>Attention Required:</strong> You have <strong>{{ overdue_tasks }}</strong> overdue task{{ overdue_tasks|pluralize }} that require immediate submission.
+            </div>
+        </div>
+        <a href="{% url 'task_list' %}?overdue=true" class="btn btn-danger btn-sm">
+            View Overdue Tasks
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Key Statistics Metric Cards -->
+    <div class="row g-3 mb-4">
+        <!-- Total Tasks -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="card h-100 border-0 shadow-sm border-top border-4 border-primary">
+                <div class="card-body text-center p-3">
+                    <span class="text-muted text-uppercase small fw-bold">Total Tasks</span>
+                    <h3 class="fw-bold my-2 text-primary">{{ total_tasks }}</h3>
+                    <span class="badge bg-primary-subtle text-primary small">All Registered</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Tasks -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="card h-100 border-0 shadow-sm border-top border-4 border-secondary">
+                <div class="card-body text-center p-3">
+                    <span class="text-muted text-uppercase small fw-bold">Pending</span>
+                    <h3 class="fw-bold my-2 text-secondary">{{ pending_tasks }}</h3>
+                    <span class="badge bg-secondary-subtle text-secondary small">Not Started</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- In Progress Tasks -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="card h-100 border-0 shadow-sm border-top border-4 border-warning">
+                <div class="card-body text-center p-3">
+                    <span class="text-muted text-uppercase small fw-bold">In Progress</span>
+                    <h3 class="fw-bold my-2 text-warning">{{ in_progress_tasks }}</h3>
+                    <span class="badge bg-warning-subtle text-warning-emphasis small">Underway</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completed Tasks -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="card h-100 border-0 shadow-sm border-top border-4 border-success">
+                <div class="card-body text-center p-3">
+                    <span class="text-muted text-uppercase small fw-bold">Completed</span>
+                    <h3 class="fw-bold my-2 text-success">{{ completed_tasks }}</h3>
+                    <span class="badge bg-success-subtle text-success small">Submitted</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overdue Tasks -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="card h-100 border-0 shadow-sm border-top border-4 border-danger">
+                <div class="card-body text-center p-3">
+                    <span class="text-muted text-uppercase small fw-bold">Overdue</span>
+                    <h3 class="fw-bold my-2 text-danger">{{ overdue_tasks }}</h3>
+                    <span class="badge bg-danger-subtle text-danger small">Past Deadline</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completion Rate -->
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="card h-100 border-0 shadow-sm border-top border-4 border-info">
+                <div class="card-body text-center p-3">
+                    <span class="text-muted text-uppercase small fw-bold">Completion</span>
+                    <h3 class="fw-bold my-2 text-info">{{ completion_percentage }}%</h3>
+                    <span class="badge bg-info-subtle text-info-emphasis small">Overall Score</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Progress & Priority Chart Row -->
+    <div class="row g-4 mb-4">
+        <!-- Progress Bar & Status Distribution -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title fw-bold mb-0">Academic Performance Progress</h5>
+                        <span class="badge bg-primary fs-6">{{ completion_percentage }}% Completed</span>
+                    </div>
+                    <p class="text-muted small mb-3">
+                        Tracking overall completion rate across all your coursework and assignments.
+                    </p>
+                    
+                    <div class="progress mb-4" style="height: 18px;">
+                        <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" 
+                             role="progressbar" 
+                             style="width: {{ completion_percentage }}%;" 
+                             aria-valuenow="{{ completion_percentage }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            {{ completion_percentage }}%
+                        </div>
+                    </div>
+
+                    <!-- Visual Breakdown by Status -->
+                    <div class="row g-2 pt-2 border-top">
+                        <div class="col-sm-4">
+                            <div class="p-2 border rounded bg-light">
+                                <span class="d-block small text-muted">Pending Ratio</span>
+                                <strong class="text-secondary">
+                                    {% if total_tasks > 0 %}{% widthratio pending_tasks total_tasks 100 %}%{% else %}0%{% endif %}
+                                </strong>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="p-2 border rounded bg-light">
+                                <span class="d-block small text-muted">In Progress Ratio</span>
+                                <strong class="text-warning-emphasis">
+                                    {% if total_tasks > 0 %}{% widthratio in_progress_tasks total_tasks 100 %}%{% else %}0%{% endif %}
+                                </strong>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="p-2 border rounded bg-light">
+                                <span class="d-block small text-muted">Completed Ratio</span>
+                                <strong class="text-success">
+                                    {% if total_tasks > 0 %}{% widthratio completed_tasks total_tasks 100 %}%{% else %}0%{% endif %}
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Priority Breakdown / Chart -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h5 class="card-title fw-bold mb-3">Tasks by Priority</h5>
+                    <div style="height: 180px; position: relative;">
+                        <canvas id="priorityChart"></canvas>
+                    </div>
+                    <div class="d-flex justify-content-around mt-3 text-center small">
+                        <div>
+                            <span class="badge bg-danger rounded-pill px-2 py-1">High</span>
+                            <div class="fw-bold mt-1">{{ priority_stats.high }}</div>
+                        </div>
+                        <div>
+                            <span class="badge bg-warning text-dark rounded-pill px-2 py-1">Medium</span>
+                            <div class="fw-bold mt-1">{{ priority_stats.medium }}</div>
+                        </div>
+                        <div>
+                            <span class="badge bg-info text-dark rounded-pill px-2 py-1">Low</span>
+                            <div class="fw-bold mt-1">{{ priority_stats.low }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tables Section: Upcoming Deadlines & Recent Tasks -->
+    <div class="row g-4">
+        <!-- Upcoming Deadlines -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title fw-bold mb-0 text-dark">
+                        <i class="bi bi-clock-history text-warning me-2"></i> Upcoming Deadlines
+                    </h5>
+                    <a href="{% url 'task_list' %}" class="small text-decoration-none">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    {% if upcoming_tasks %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Task Title</th>
+                                    <th>Subject</th>
+                                    <th>Deadline</th>
+                                    <th class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for task in upcoming_tasks %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'task_detail' task.id %}" class="fw-semibold text-decoration-none text-dark">
+                                            {{ task.title|truncatechars:28 }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary-subtle text-secondary">{{ task.subject }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="small text-muted">{{ task.deadline|date:"M d, Y H:i" }}</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <a href="{% url 'task_detail' task.id %}" class="btn btn-sm btn-outline-primary py-0 px-2">
+                                            View
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="p-4 text-center text-muted">
+                        <i class="bi bi-calendar-check fs-2 d-block mb-2 text-success"></i>
+                        No pending upcoming deadlines. You're all caught up!
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Tasks -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title fw-bold mb-0 text-dark">
+                        <i class="bi bi-journal-text text-primary me-2"></i> Recently Updated
+                    </h5>
+                    <a href="{% url 'task_create' %}" class="small text-decoration-none">+ Add New</a>
+                </div>
+                <div class="card-body p-0">
+                    {% if recent_tasks %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Task Title</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for task in recent_tasks %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'task_detail' task.id %}" class="fw-semibold text-decoration-none text-dark">
+                                            {{ task.title|truncatechars:28 }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {% if task.priority == 'HIGH' %}
+                                            <span class="badge bg-danger">High</span>
+                                        {% elif task.priority == 'MEDIUM' %}
+                                            <span class="badge bg-warning text-dark">Medium</span>
+                                        {% else %}
+                                            <span class="badge bg-info text-dark">Low</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if task.status == 'COMPLETED' %}
+                                            <span class="badge bg-success">Completed</span>
+                                        {% elif task.status == 'IN_PROGRESS' %}
+                                            <span class="badge bg-warning text-dark">In Progress</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end">
+                                        <a href="{% url 'task_detail' task.id %}" class="btn btn-sm btn-outline-primary py-0 px-2">
+                                            View
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="p-4 text-center text-muted">
+                        <i class="bi bi-inbox fs-2 d-block mb-2 text-muted"></i>
+                        No tasks created yet. Click <a href="{% url 'task_create' %}">here</a> to add your first task!
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Chart.js CDN for visual statistics representation -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('priorityChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['High', 'Medium', 'Low'],
+                    datasets: [{
+                        data: [{{ priority_stats.high }}, {{ priority_stats.medium }}, {{ priority_stats.low }}],
+                        backgroundColor: ['#dc3545', '#ffc107', '#0dcaf0'],
+                        borderWidth: 2,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

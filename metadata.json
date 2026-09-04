@@ -1,0 +1,6 @@
+{
+  "name": "Student Task & Performance Management System",
+  "description": "A full-stack academic task and performance management system built with Django, SQLite, Bootstrap 5, and vanilla JavaScript.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

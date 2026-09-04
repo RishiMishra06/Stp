@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+
+{% block title %}Task Management{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header with Action -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="h3 fw-bold text-dark mb-1">Academic Tasks</h2>
+            <p class="text-secondary mb-0">Search, filter, manage, and track your coursework assignments.</p>
+        </div>
+        <div class="mt-3 mt-md-0">
+            <a href="{% url 'task_create' %}" class="btn btn-primary d-inline-flex align-items-center gap-2 shadow-sm">
+                <i class="bi bi-plus-lg"></i> Add New Task
+            </a>
+        </div>
+    </div>
+
+    <!-- Search & Filter Card -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-3">
+            <form method="get" action="{% url 'task_list' %}" class="row g-2 align-items-center">
+                <!-- Search Input -->
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" name="q" value="{{ query }}" class="form-control border-start-0" placeholder="Search by title or subject...">
+                    </div>
+                </div>
+
+                <!-- Status Filter -->
+                <div class="col-6 col-md-2">
+                    <select name="status" class="form-select">
+                        <option value="">All Statuses</option>
+                        <option value="PENDING" {% if status_filter == 'PENDING' %}selected{% endif %}>Pending</option>
+                        <option value="IN_PROGRESS" {% if status_filter == 'IN_PROGRESS' %}selected{% endif %}>In Progress</option>
+                        <option value="COMPLETED" {% if status_filter == 'COMPLETED' %}selected{% endif %}>Completed</option>
+                    </select>
+                </div>
+
+                <!-- Priority Filter -->
+                <div class="col-6 col-md-2">
+                    <select name="priority" class="form-select">
+                        <option value="">All Priorities</option>
+                        <option value="HIGH" {% if priority_filter == 'HIGH' %}selected{% endif %}>High</option>
+                        <option value="MEDIUM" {% if priority_filter == 'MEDIUM' %}selected{% endif %}>Medium</option>
+                        <option value="LOW" {% if priority_filter == 'LOW' %}selected{% endif %}>Low</option>
+                    </select>
+                </div>
+
+                <!-- Sort Order -->
+                <div class="col-6 col-md-2">
+                    <select name="sort" class="form-select">
+                        <option value="deadline_asc" {% if sort == 'deadline_asc' %}selected{% endif %}>Deadline (Earliest)</option>
+                        <option value="deadline_desc" {% if sort == 'deadline_desc' %}selected{% endif %}>Deadline (Latest)</option>
+                        <option value="created_desc" {% if sort == 'created_desc' %}selected{% endif %}>Recently Created</option>
+                        <option value="priority" {% if sort == 'priority' %}selected{% endif %}>Priority</option>
+                    </select>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="col-6 col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-secondary w-100">
+                        <i class="bi bi-funnel"></i> Filter
+                    </button>
+                    <a href="{% url 'task_list' %}" class="btn btn-outline-secondary" title="Reset Filters">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </a>
+                </div>
+
+                <!-- Overdue Quick Filter Checkbox -->
+                <div class="col-12 mt-2">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="overdue" value="true" id="overdueSwitch" {% if overdue_filter == 'true' %}checked{% endif %} onchange="this.form.submit()">
+                        <label class="form-check-label text-danger fw-semibold small" for="overdueSwitch">
+                            <i class="bi bi-exclamation-diamond me-1"></i> Show Overdue Tasks Only
+                        </label>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Task Table Card -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            {% if tasks %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 28%;">Task Title</th>
+                            <th>Subject</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Deadline</th>
+                            <th class="text-end" style="width: 20%;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks %}
+                        <tr class="{% if task.is_overdue %}table-danger-subtle{% endif %}">
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    {% if task.is_overdue %}
+                                        <span class="badge bg-danger" title="Overdue Submission">Overdue</span>
+                                    {% endif %}
+                                    <a href="{% url 'task_detail' task.id %}" class="fw-semibold text-decoration-none text-dark">
+                                        {{ task.title }}
+                                    </a>
+                                </div>
+                                {% if task.description %}
+                                <div class="small text-muted text-truncate" style="max-width: 320px;">
+                                    {{ task.description }}
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border">{{ task.subject }}</span>
+                            </td>
+                            <td>
+                                {% if task.priority == 'HIGH' %}
+                                    <span class="badge bg-danger">High</span>
+                                {% elif task.priority == 'MEDIUM' %}
+                                    <span class="badge bg-warning text-dark">Medium</span>
+                                {% else %}
+                                    <span class="badge bg-info text-dark">Low</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <!-- Quick Status Selector -->
+                                <form method="post" action="{% url 'task_status_update' task.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <select name="status" class="form-select form-select-sm d-inline-block w-auto border-0 py-1 ps-2 pe-4 fw-semibold
+                                        {% if task.status == 'COMPLETED' %}bg-success-subtle text-success{% elif task.status == 'IN_PROGRESS' %}bg-warning-subtle text-warning-emphasis{% else %}bg-secondary-subtle text-secondary{% endif %}"
+                                        onchange="this.form.submit()">
+                                        <option value="PENDING" {% if task.status == 'PENDING' %}selected{% endif %}>Pending</option>
+                                        <option value="IN_PROGRESS" {% if task.status == 'IN_PROGRESS' %}selected{% endif %}>In Progress</option>
+                                        <option value="COMPLETED" {% if task.status == 'COMPLETED' %}selected{% endif %}>Completed</option>
+                                    </select>
+                                </form>
+                            </td>
+                            <td>
+                                <div class="{% if task.is_overdue %}text-danger fw-bold{% else %}text-muted{% endif %} small">
+                                    <i class="bi bi-calendar3 me-1"></i>{{ task.deadline|date:"M d, Y" }}
+                                    <div class="text-secondary small">{{ task.deadline|date:"H:i" }} UTC</div>
+                                </div>
+                            </td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="{% url 'task_detail' task.id %}" class="btn btn-outline-primary" title="View Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="{% url 'task_update' task.id %}" class="btn btn-outline-secondary" title="Edit Task">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a href="{% url 'task_delete' task.id %}" class="btn btn-outline-danger" title="Delete Task">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Bar -->
+            {% if page_obj.has_other_pages %}
+            <div class="d-flex justify-content-between align-items-center p-3 border-top">
+                <span class="small text-muted">
+                    Showing {{ page_obj.start_index }} - {{ page_obj.end_index }} of {{ total_filtered_count }} tasks
+                </span>
+                <nav aria-label="Task pagination">
+                    <ul class="pagination pagination-sm mb-0">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ query }}&status={{ status_filter }}&priority={{ priority_filter }}&sort={{ sort }}&overdue={{ overdue_filter }}">Previous</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}&q={{ query }}&status={{ status_filter }}&priority={{ priority_filter }}&sort={{ sort }}&overdue={{ overdue_filter }}">{{ num }}</a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ query }}&status={{ status_filter }}&priority={{ priority_filter }}&sort={{ sort }}&overdue={{ overdue_filter }}">Next</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled"><span class="page-link">Next</span></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+
+            {% else %}
+            <!-- Empty State -->
+            <div class="p-5 text-center">
+                <i class="bi bi-journal-x fs-1 text-muted d-block mb-3"></i>
+                <h5 class="fw-bold text-dark">No tasks found</h5>
+                <p class="text-muted">
+                    {% if query or status_filter or priority_filter or overdue_filter %}
+                        No tasks match your filter criteria. Try resetting the filters.
+                    {% else %}
+                        You have not created any tasks yet.
+                    {% endif %}
+                </p>
+                <a href="{% url 'task_create' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-lg me-1"></i> Add Your First Task
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

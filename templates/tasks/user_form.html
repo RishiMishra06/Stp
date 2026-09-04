@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}Add New User (Student or Administrator){% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <!-- Breadcrumbs -->
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}" class="text-decoration-none">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'user_list' %}" class="text-decoration-none">Users</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Add User</li>
+                </ol>
+            </nav>
+
+            <!-- Card Form -->
+            <div class="card border-0 shadow-sm border-l-blue">
+                <div class="card-header bg-white border-bottom p-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-3 bg-primary-subtle text-primary p-3">
+                            <i class="bi bi-person-plus-fill fs-4"></i>
+                        </div>
+                        <div>
+                            <h3 class="h4 fw-bold text-dark mb-1">Create User Account</h3>
+                            <p class="text-secondary small mb-0">Register a new Student or grant Administrator / Faculty privileges.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-4">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {% for error in form.non_field_errors %}
+                                    <div><i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error }}</div>
+                                {% endfor %}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endif %}
+
+                        <!-- Account Type / Role Selection -->
+                        <div class="mb-4 p-3 bg-light rounded-3 border">
+                            <label class="form-label fw-bold text-dark">
+                                <i class="bi bi-shield-check me-1 text-primary"></i> Account Type &amp; Privileges *
+                            </label>
+                            {{ form.role }}
+                            {% if form.role.help_text %}
+                                <div class="form-text text-muted mt-1">{{ form.role.help_text }}</div>
+                            {% endif %}
+                            {% if form.role.errors %}
+                                <div class="text-danger small mt-1">{{ form.role.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Name Row -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-secondary">First Name *</label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.first_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-secondary">Last Name *</label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.last_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Username & Email -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-secondary">Username *</label>
+                                {{ form.username }}
+                                {% if form.username.errors %}
+                                    <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-secondary">Email Address *</label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Degree or Department -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-secondary">{{ form.degree_or_dept.label }}</label>
+                            {{ form.degree_or_dept }}
+                            {% if form.degree_or_dept.errors %}
+                                <div class="text-danger small mt-1">{{ form.degree_or_dept.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Password Row -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-secondary">Initial Password *</label>
+                                {{ form.password }}
+                                {% if form.password.errors %}
+                                    <div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-secondary">Confirm Password *</label>
+                                {{ form.confirm_password }}
+                                {% if form.confirm_password.errors %}
+                                    <div class="text-danger small mt-1">{{ form.confirm_password.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                            <a href="{% url 'user_list' %}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4 d-inline-flex align-items-center gap-2">
+                                <i class="bi bi-check-circle-fill"></i> Create Account
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

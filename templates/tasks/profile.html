@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Profile Card -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h4 class="fw-bold mb-0 text-dark">
+                        <i class="bi bi-person-badge text-primary me-2"></i> Student Profile
+                    </h4>
+                    <p class="text-muted small mb-0 mt-1">Review your account details and update your contact information.</p>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- Top Info Banner with stats -->
+                    <div class="row g-3 p-3 bg-light rounded mb-4 align-items-center">
+                        <div class="col-auto">
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 64px; height: 64px; font-size: 1.75rem;">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <h5 class="fw-bold mb-1">{{ user.get_full_name|default:user.username }}</h5>
+                            <div class="text-muted small">
+                                <span class="me-3"><i class="bi bi-person me-1"></i> Username: <strong>{{ user.username }}</strong></span>
+                                <span><i class="bi bi-calendar-event me-1"></i> Joined: {{ user.date_joined|date:"F d, Y" }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Stats in Profile -->
+                    <div class="row g-3 mb-4 text-center">
+                        <div class="col-4">
+                            <div class="p-3 border rounded">
+                                <span class="text-muted small text-uppercase">Total Tasks</span>
+                                <h4 class="fw-bold text-primary mb-0 mt-1">{{ total_tasks }}</h4>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-3 border rounded">
+                                <span class="text-muted small text-uppercase">Completed</span>
+                                <h4 class="fw-bold text-success mb-0 mt-1">{{ completed_tasks }}</h4>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-3 border rounded">
+                                <span class="text-muted small text-uppercase">Completion Rate</span>
+                                <h4 class="fw-bold text-info mb-0 mt-1">{{ completion_rate }}%</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Edit Profile Form -->
+                    <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">Update Basic Details</h5>
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.first_name.id_for_label }}" class="form-label fw-semibold">First Name</label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.first_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.last_name.id_for_label }}" class="form-label fw-semibold">Last Name</label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                    <div class="text-danger small mt-1">{{ form.last_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold">Email Address</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+                            {% endif %}
+                            <div class="form-text small">Used for task deadline notifications and account recovery.</div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+                                Back to Dashboard
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-save me-1"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
