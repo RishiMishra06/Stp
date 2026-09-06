@@ -1,2 +1,13 @@
+[project]
+name = "student-task-manager"
+version = "1.0.0"
+requires-python = ">=3.12"
+dependencies = [
+    "Django==5.1.6",
+    "psycopg2-binary",
+    "dj-database-url",
+    "gunicorn",
+]
+
 [tool.vercel.scripts]
 build = "python manage.py migrate --noinput"
