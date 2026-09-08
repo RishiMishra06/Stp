@@ -306,3 +306,4 @@ Destroying test database for alias 'default'...
   * *Answer:* The `Task` model defines an `@property` named `is_overdue`. It evaluates `self.deadline < timezone.now() and self.status != 'COMPLETED'`. This requires zero manual updates and computes dynamically.
 * **Q4: How does password security work in Django?**
   * *Answer:* Passwords are never stored in plain text. Django automatically hashes passwords using PBKDF2 with SHA-256 and a cryptographic salt via `user.set_password()`.
+Admin setup
