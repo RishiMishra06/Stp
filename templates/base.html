@@ -45,6 +45,7 @@
                                 <i class="bi bi-plus-circle me-1"></i> Add Task
                             </a>
                         </li>
+                        {% if user.is_staff %}
                         <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.url_name in 'user_list user_create' %}active fw-semibold{% endif %}" href="{% url 'user_list' %}">
                                 <i class="bi bi-people me-1"></i> Users
