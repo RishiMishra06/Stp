@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Q, Count
@@ -329,7 +329,7 @@ def about_view(request):
     return render(request, 'tasks/about.html')
 
 
-@login_required
+@user_passes_test(lambda u: u.is_staff)
 def user_list_view(request):
     """
     Directory of registered students and administrators/faculty.
@@ -370,7 +370,7 @@ def user_list_view(request):
     return render(request, 'tasks/user_list.html', context)
 
 
-@login_required
+@user_passes_test(lambda u: u.is_staff)
 def user_create_view(request):
     """
     View allowing the creation of new Student and Administrator/Faculty accounts.
