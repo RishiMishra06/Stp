@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.db.models import Q, Count
 from django.core.paginator import Paginator
 
-from .models import Task
+from .models import Task, StudentProfile
 from .forms import StudentRegistrationForm, StudentProfileForm, TaskForm, AddUserAdminForm
 
 
@@ -290,7 +290,7 @@ def task_status_update_view(request, pk):
     return redirect(referer if referer else 'task_list')
 
 
-@login_required
+ @login_required
 def profile_view(request):
     """
     Student profile view and update.
@@ -301,22 +301,30 @@ def profile_view(request):
     completed_tasks = user_tasks.filter(status=Task.STATUS_COMPLETED).count()
     completion_rate = round((completed_tasks / total_tasks * 100), 1) if total_tasks > 0 else 0
 
+    profile, created = StudentProfile.objects.get_or_create(user=request.user)
+
     if request.method == 'POST':
         form = StudentProfileForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
+            profile.cgpa = form.cleaned_data['cgpa']
+            profile.save()
             messages.success(request, 'Your profile has been updated successfully.')
             return redirect('profile')
         else:
             messages.error(request, 'Please correct the errors in the profile form.')
     else:
-        form = StudentProfileForm(instance=request.user)
+        form = StudentProfileForm(
+            instance=request.user,
+            initial={'cgpa': profile.cgpa}
+        )
 
     context = {
         'form': form,
         'total_tasks': total_tasks,
         'completed_tasks': completed_tasks,
         'completion_rate': completion_rate,
+        'profile': profile,
     }
     return render(request, 'tasks/profile.html', context)
 
