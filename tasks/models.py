@@ -69,3 +69,10 @@ class Task(models.Model):
         if self.status == self.STATUS_COMPLETED or not self.deadline:
             return False
         return self.deadline < timezone.now()
+
+class StudentProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    cgpa = models.DecimalField(max_digits=4, decimal_places=2, default=0.00)
+
+    def __str__(self):
+        return f"{self.user.username} Profile"
