@@ -82,10 +82,22 @@ class StudentProfileForm(forms.ModelForm):
         required=True,
         widget=forms.EmailInput(attrs={'class': 'form-control'})
     )
+        cgpa = forms.DecimalField(
+        max_digits=4,
+        decimal_places=2,
+        min_value=0,
+        max_value=10,
+        required=True,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'step': '0.01',
+            'placeholder': 'e.g. 8.50'
+        })
+    )
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email']
+        fields = ['first_name', 'last_name', 'email', 'cgpa']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
