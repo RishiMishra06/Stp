@@ -289,8 +289,7 @@ def task_status_update_view(request, pk):
     referer = request.META.get('HTTP_REFERER')
     return redirect(referer if referer else 'task_list')
 
-
- @login_required
+@login_required
 def profile_view(request):
     """
     Student profile view and update.
