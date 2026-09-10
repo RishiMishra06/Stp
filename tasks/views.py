@@ -128,7 +128,7 @@ def dashboard_view(request):
         'urgent_overdue': urgent_overdue,
         'priority_stats': priority_stats,
         'cgpa': profile.cgpa,
-'profile': profile,
+        'profile': profile,
     }
 
     return render(request, 'tasks/dashboard.html', context)
