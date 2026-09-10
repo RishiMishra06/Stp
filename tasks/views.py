@@ -10,6 +10,8 @@ from django.core.paginator import Paginator
 
 from .models import Task, StudentProfile
 from .forms import StudentRegistrationForm, StudentProfileForm, TaskForm, AddUserAdminForm
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 
 
 def register_view(request):
@@ -344,6 +346,76 @@ def profile_view(request):
     }
 
     return render(request, 'tasks/profile.html', context)
+
+@login_required
+def password_change_view(request):
+    user_tasks = Task.objects.filter(user=request.user)
+
+    total_tasks = user_tasks.count()
+    completed_tasks = user_tasks.filter(
+        status=Task.STATUS_COMPLETED
+    ).count()
+
+    completion_rate = (
+        round((completed_tasks / total_tasks * 100), 1)
+        if total_tasks > 0
+        else 0
+    )
+
+    profile, created = StudentProfile.objects.get_or_create(
+        user=request.user
+    )
+
+    if request.method == 'POST':
+        password_form = PasswordChangeForm(
+            request.user,
+            request.POST
+        )
+
+        if password_form.is_valid():
+            user = password_form.save()
+            update_session_auth_hash(request, user)
+
+            messages.success(
+                request,
+                'Your password has been changed successfully.'
+            )
+
+            return redirect('profile')
+
+        messages.error(
+            request,
+            'Please correct the errors below.'
+        )
+
+    else:
+        password_form = PasswordChangeForm(request.user)
+
+    form = StudentProfileForm(
+        instance=request.user,
+        initial={
+            'cgpa': profile.cgpa,
+            'phone': profile.phone,
+            'branch': profile.branch,
+            'semester': profile.semester,
+            'academic_year': profile.academic_year,
+        }
+    )
+
+    context = {
+        'form': form,
+        'password_form': password_form,
+        'total_tasks': total_tasks,
+        'completed_tasks': completed_tasks,
+        'completion_rate': completion_rate,
+        'profile': profile,
+    }
+
+    return render(
+        request,
+        'tasks/profile.html',
+        context
+    )
 
 
 def about_view(request):
