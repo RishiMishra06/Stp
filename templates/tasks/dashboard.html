@@ -115,6 +115,79 @@
                 </div>
             </div>
         </div>
+<!-- Student Profile Summary -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="card-title fw-bold mb-0">
+            <i class="bi bi-person-vcard text-primary me-2"></i>
+            Student Profile Summary
+        </h5>
+        <a href="{% url 'profile' %}" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-pencil me-1"></i> Edit Profile
+        </a>
+    </div>
+
+    <div class="card-body">
+        <div class="row g-3">
+
+            <div class="col-md-6 col-lg-4">
+                <div class="border rounded p-3 h-100">
+                    <small class="text-muted d-block">Student Name</small>
+                    <strong>{{ user.get_full_name|default:user.username }}</strong>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="border rounded p-3 h-100">
+                    <small class="text-muted d-block">Email</small>
+                    <strong>{{ user.email|default:"Not provided" }}</strong>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="border rounded p-3 h-100">
+                    <small class="text-muted d-block">Phone Number</small>
+                    <strong>{{ profile.phone|default:"Not provided" }}</strong>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="border rounded p-3 h-100">
+                    <small class="text-muted d-block">Department / Branch</small>
+                    <strong>{{ profile.branch|default:"Not provided" }}</strong>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="border rounded p-3 h-100">
+                    <small class="text-muted d-block">Semester</small>
+                    <strong>
+                        {% if profile.semester %}
+                            {{ profile.semester }}th Semester
+                        {% else %}
+                            Not provided
+                        {% endif %}
+                    </strong>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="border rounded p-3 h-100">
+                    <small class="text-muted d-block">Academic Year</small>
+                    <strong>{{ profile.academic_year|default:"Not provided" }}</strong>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="border rounded p-3 h-100">
+                    <small class="text-muted d-block">CGPA</small>
+                    <strong>{{ profile.cgpa|default:"0.00" }}</strong>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
     <!-- Performance Progress & Priority Chart Row -->
     <div class="row g-4 mb-4">
         <!-- Progress Bar & Status Distribution -->
