@@ -307,10 +307,17 @@ def profile_view(request):
 
     if request.method == 'POST':
         form = StudentProfileForm(request.POST, instance=request.user)
+
         if form.is_valid():
             form.save()
+
             profile.cgpa = form.cleaned_data['cgpa']
+            profile.phone = form.cleaned_data['phone']
+            profile.branch = form.cleaned_data['branch']
+            profile.semester = form.cleaned_data['semester']
+            profile.academic_year = form.cleaned_data['academic_year']
             profile.save()
+
             messages.success(request, 'Your profile has been updated successfully.')
             return redirect('profile')
         else:
@@ -318,7 +325,13 @@ def profile_view(request):
     else:
         form = StudentProfileForm(
             instance=request.user,
-            initial={'cgpa': profile.cgpa}
+            initial={
+                'cgpa': profile.cgpa,
+                'phone': profile.phone,
+                'branch': profile.branch,
+                'semester': profile.semester,
+                'academic_year': profile.academic_year,
+            }
         )
 
     context = {
@@ -328,6 +341,7 @@ def profile_view(request):
         'completion_rate': completion_rate,
         'profile': profile,
     }
+
     return render(request, 'tasks/profile.html', context)
 
 
