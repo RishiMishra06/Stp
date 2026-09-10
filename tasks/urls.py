@@ -21,6 +21,11 @@ urlpatterns = [
 
     # Student Profile
     path('profile/', views.profile_view, name='profile'),
+path(
+    'password-change/',
+    views.password_change_view,
+    name='password_change'
+),
 
     # User Management (Students & Admins)
     path('users/', views.user_list_view, name='user_list'),
