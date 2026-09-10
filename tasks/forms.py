@@ -95,6 +95,42 @@ class StudentProfileForm(forms.ModelForm):
         })
     )
 
+    phone = forms.CharField(
+        max_length=15,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter phone number'
+        })
+    )
+
+    branch = forms.CharField(
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'e.g. Computer Science & Engineering'
+        })
+    )
+
+    semester = forms.IntegerField(
+        required=False,
+        min_value=1,
+        max_value=8,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'e.g. 5'
+        })
+    )
+
+    academic_year = forms.CharField(
+        max_length=20,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'e.g. 2026-27'
+        })
+    )
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email']
