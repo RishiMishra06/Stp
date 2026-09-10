@@ -113,7 +113,8 @@ def dashboard_view(request):
         'medium': user_tasks.filter(priority=Task.PRIORITY_MEDIUM).count(),
         'low': user_tasks.filter(priority=Task.PRIORITY_LOW).count(),
     }
-profile, created = StudentProfile.objects.get_or_create(user=request.user)
+
+    profile, created = StudentProfile.objects.get_or_create(user=request.user)
 
     context = {
         'total_tasks': total_tasks,
@@ -126,8 +127,7 @@ profile, created = StudentProfile.objects.get_or_create(user=request.user)
         'upcoming_tasks': upcoming_tasks,
         'urgent_overdue': urgent_overdue,
         'priority_stats': priority_stats,
-'cgpa': profile.cgpa,
-
+        'cgpa': profile.cgpa,
     }
 
     return render(request, 'tasks/dashboard.html', context)
