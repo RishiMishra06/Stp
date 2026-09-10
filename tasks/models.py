@@ -73,6 +73,10 @@ class Task(models.Model):
 class StudentProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     cgpa = models.DecimalField(max_digits=4, decimal_places=2, default=0.00)
+    phone = models.CharField(max_length=15, blank=True)
+    branch = models.CharField(max_length=100, blank=True)
+    semester = models.PositiveIntegerField(null=True, blank=True)
+    academic_year = models.CharField(max_length=20, blank=True)
 
     def __str__(self):
         return f"{self.user.username} Profile"
