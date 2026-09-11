@@ -356,7 +356,7 @@ def profile_view(request):
         (filled_fields / len(profile_fields)) * 100
     )
 
-        context = {
+    context = {
         'form': form,
         'total_tasks': total_tasks,
         'completed_tasks': completed_tasks,
