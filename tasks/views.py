@@ -336,13 +336,33 @@ def profile_view(request):
                 'academic_year': profile.academic_year,
             }
         )
+    profile_fields = [
+        request.user.first_name,
+        request.user.last_name,
+        request.user.email,
+        profile.cgpa,
+        profile.phone,
+        profile.branch,
+        profile.semester,
+        profile.academic_year,
+    ]
 
-    context = {
+    filled_fields = sum(
+        1 for field in profile_fields
+        if field not in [None, '']
+    )
+
+    profile_completion = round(
+        (filled_fields / len(profile_fields)) * 100
+    )
+
+        context = {
         'form': form,
         'total_tasks': total_tasks,
         'completed_tasks': completed_tasks,
         'completion_rate': completion_rate,
         'profile': profile,
+        'profile_completion': profile_completion,
     }
 
     return render(request, 'tasks/profile.html', context)
